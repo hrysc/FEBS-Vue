@@ -122,7 +122,7 @@ v-hasAnyRole | 当用户拥有列出的任意一个角色的时候，渲染该�
 切换到front文件夹下
 ```
 # 安装yarn
-npm install yarn
+npm install -g yarn
 
 # 下载依赖
 yarn install

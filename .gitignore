@@ -4,20 +4,16 @@ backend/target/
 backend/log/
 
 front/.DS_Store
-front/.node_modules/
-front/./dist/
-front/.npm-debug.log*
-front/.yarn-debug.log*
-front/.yarn-error.log*
-front/./test/unit/coverage/
-front/./test/e2e/reports/
-front/.selenium-debug.log
+front/node_modules
+front/dist/
+front/npm-debug.log*
+front/yarn-debug.log*
+front/yarn-error.log*
+front/test/unit/coverage
+front/test/e2e/reports
+front/selenium-debug.log
 
 # Editor directories and files
-front/..idea
-front/..vscode
-front/.*.suo
-front/.*.ntvs*
-front/.*.njsproj
-front/.*.sln
-front/.package-lock.json
+front/.idea
+front/.vscode
+front/package-lock.json

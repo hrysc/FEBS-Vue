@@ -127,77 +127,79 @@ export default {
     let maxMemory = -1e10
     let maxSize = -1e10
     this.timer = setInterval(() => {
-      axios.all([
-        this.$get('redis/keysSize'),
-        this.$get('redis/memoryInfo')
-      ]).then((r) => {
-        let currentMemory = r[1].data.used_memory / 1000
-        let currentSize = r[0].data.dbSize
-        if (currentMemory < minMemory) {
-          minMemory = currentMemory
-        }
-        if (currentMemory > maxMemory) {
-          maxMemory = currentMemory
-        }
-        if (currentSize < minSize) {
-          minSize = currentSize
-        }
-        if (currentSize > maxSize) {
-          maxSize = currentSize
-        }
-        let time = moment().format('hh:mm:ss')
-        this.memory.data.push(currentMemory)
-        this.memory.xdata.push(time)
-        this.key.data.push(currentSize)
-        this.key.xdata.push(time)
-        if (this.memory.data.length >= 6) {
-          this.memory.data.shift()
-          this.memory.xdata.shift()
-        }
-        if (this.key.data.length >= 6) {
-          this.key.data.shift()
-          this.key.xdata.shift()
-        }
-        this.$refs.memoryInfo.updateSeries([
-          {
-            name: '内存(kb)',
-            data: this.memory.data.slice()
+      if (this.$route.path.indexOf('redis') !== -1) {
+        axios.all([
+          this.$get('redis/keysSize'),
+          this.$get('redis/memoryInfo')
+        ]).then((r) => {
+          let currentMemory = r[1].data.used_memory / 1000
+          let currentSize = r[0].data.dbSize
+          if (currentMemory < minMemory) {
+            minMemory = currentMemory
           }
-        ])
-        this.$refs.memoryInfo.updateOptions({
-          xaxis: {
-            categories: this.memory.xdata.slice()
-          },
-          yaxis: {
-            min: minMemory,
-            max: maxMemory
+          if (currentMemory > maxMemory) {
+            maxMemory = currentMemory
           }
-        }, true, true)
-        this.$refs.keySize.updateSeries([
-          {
-            name: 'key数量',
-            data: this.key.data.slice()
+          if (currentSize < minSize) {
+            minSize = currentSize
           }
-        ])
-        this.$refs.keySize.updateOptions({
-          xaxis: {
-            categories: this.key.xdata.slice()
-          },
-          yaxis: {
-            min: minSize - 2,
-            max: maxSize + 2
+          if (currentSize > maxSize) {
+            maxSize = currentSize
           }
-        }, true, true)
-        if (this.loading) {
-          this.loading = false
-        }
-      }).catch((r) => {
-        console.error(r)
-        this.$message.error('获取Redis信息失败')
-        if (this.timer) {
-          clearInterval(this.timer)
-        }
-      })
+          let time = moment().format('hh:mm:ss')
+          this.memory.data.push(currentMemory)
+          this.memory.xdata.push(time)
+          this.key.data.push(currentSize)
+          this.key.xdata.push(time)
+          if (this.memory.data.length >= 6) {
+            this.memory.data.shift()
+            this.memory.xdata.shift()
+          }
+          if (this.key.data.length >= 6) {
+            this.key.data.shift()
+            this.key.xdata.shift()
+          }
+          this.$refs.memoryInfo.updateSeries([
+            {
+              name: '内存(kb)',
+              data: this.memory.data.slice()
+            }
+          ])
+          this.$refs.memoryInfo.updateOptions({
+            xaxis: {
+              categories: this.memory.xdata.slice()
+            },
+            yaxis: {
+              min: minMemory,
+              max: maxMemory
+            }
+          }, true, true)
+          this.$refs.keySize.updateSeries([
+            {
+              name: 'key数量',
+              data: this.key.data.slice()
+            }
+          ])
+          this.$refs.keySize.updateOptions({
+            xaxis: {
+              categories: this.key.xdata.slice()
+            },
+            yaxis: {
+              min: minSize - 2,
+              max: maxSize + 2
+            }
+          }, true, true)
+          if (this.loading) {
+            this.loading = false
+          }
+        }).catch((r) => {
+          console.error(r)
+          this.$message.error('获取Redis信息失败')
+          if (this.timer) {
+            clearInterval(this.timer)
+          }
+        })
+      }
     }, 3000)
     this.$get('redis/info').then((r) => {
       this.redisInfo = r.data.data
